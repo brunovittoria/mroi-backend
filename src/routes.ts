@@ -22,9 +22,15 @@ const router = Router();
  * POST /register
  * @tags Authentication
  * @param {RegisterPostRequestBody} request.body.required
- * @return {RegisterCreated} 201 - success response
+ * @return {AcessTokenResponse} 201 - success response
  * @return {Error} 500 - error response
- * @return {Error} 404 - domain not found
+ * @return {Error} 400 - User Already Exists
+ */
+
+/**
+ * Represents a AcessTokenResponse object
+ * @typedef {object} AcessTokenResponse
+ * @property {string} token - Access Token
  */
 router.post('/register', endpoint(registerUserController));
 
@@ -39,10 +45,11 @@ router.post('/register', endpoint(registerUserController));
  * POST /login
  * @tags Authentication
  * @param {LoginPostRequestBody} request.body.required
- * @return {AuthenticationSuccess} 201 - success response
+ * @return {AcessTokenResponse} 201 - success response
  * @return {Error} 500 - error response
- * @return {Error} 404 - domain not found
+ * @return {Error} 401 - Invalid Credentials
  */
+
 router.post('/login', endpoint(authenticateUserController));
 
 /**
@@ -59,16 +66,32 @@ router.post('/login', endpoint(authenticateUserController));
  * @tags Profile
  * @security Bearer
  * @param {ProfileGetRequestBody} request.body.required
- * @return {ProfileSuccess} 201 - success response
+ * @return {ProfileResponse} 201 - success response
  * @return {Error} 500 - error response
- * @return {Error} 404 - domain not found
+ * @return {Error} 401 - Unauthorized
  */
+
+/**
+ * Represents a ProfileResponse object
+ * @typedef {object} ProfileResponse
+ * @property {User} user - User Object
+ */
+
+/**
+ * Represents a User object
+ * @typedef {object} User
+ * @property {string} email - User Email
+ * @property {string} phone - User Phone
+ * @property {string} name - User name
+ * @property {string} password - User Password
+ */
+
 router.get('/profile', jwt, endpoint(getProfileController));
 
 /**
  * Represents a SharePutRequestBody object
  * @typedef {object} SharePutRequestBody
- * @property {string} email - ???
+ * @property {string} destination - Access Destination
  */
 
 /**
@@ -76,27 +99,37 @@ router.get('/profile', jwt, endpoint(getProfileController));
  * @tags Share
  * @security Bearer
  * @param {SharePutRequestBody} request.body.required
- * @return {ShareUpdated} 201 - success response
+ * @return  200 - success response
  * @return {Error} 500 - error response
- * @return {Error} 404 - domain not found
+ * @return {Error} 401 - Unauthorized
  */
-router.put('/shares', jwt, endpoint(updateUserShareController));
 
-/**
- * Represents a ShareGetRequestBody object
- * @typedef {object} ShareGetRequestBody
- * @property {string} email - ???
- */
+router.put('/shares', jwt, endpoint(updateUserShareController));
 
 /**
  * GET /shares
  * @tags Share
  * @security Bearer
- * @param {ShareGetRequestBody} request.body.required
  * @return {ShareSuccess} 201 - success response
  * @return {Error} 500 - error response
- * @return {Error} 404 - domain not found
+ * @return {Error} 401 - Unauthorized
  */
+
+/**
+ * Represents a ShareSuccess Object
+ * @typedef {object} ShareSuccess
+ * @property {Array<Share>} shares - Shares
+ */
+
+/**
+ * Represents a Share Object
+ * @typedef {object} Share
+ * @property {number} id  - Id
+ * @property {number} user_id  - User Id
+ * @property {string} destination  - Destination
+ * @property {number} click_count  - Click Count
+ */
+
 router.get('/shares', jwt, endpoint(getUserSharesController));
 
 export default router;

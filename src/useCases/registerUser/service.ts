@@ -7,7 +7,9 @@ import { validateRegisterUserBody } from './validation';
 export const registerUserService = async (body: Record<string, unknown>) => {
   const bodyParsed = validateRegisterUserBody.parse(body);
 
-  const user = await prisma.user.findUnique({ where: { email: bodyParsed.email } });
+  const user = await prisma.user.findUnique({
+    where: { email: bodyParsed.email }
+  });
 
   if (user) {
     throw new HttpError(400, 'User already exists');
@@ -24,7 +26,7 @@ export const registerUserService = async (body: Record<string, unknown>) => {
     }
   });
 
-  prisma.accessStat.createMany({
+  await prisma.accessStat.createMany({
     data: [
       { destination: 'Github', user_id: userCreated.id, click_count: 0 },
       { destination: 'Youtube', user_id: userCreated.id, click_count: 0 },
