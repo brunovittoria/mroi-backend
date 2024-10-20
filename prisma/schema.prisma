@@ -28,10 +28,11 @@ model User {
 model AccessStat {
     id          Int    @id @default(autoincrement())
     user_id     Int
-    destination String @unique // // Pode ser 'YouTube' ou 'GitHub'
+    destination String // // Pode ser 'YouTube' ou 'GitHub'
     click_count Int    @default(0)
 
     user User @relation(fields: [user_id], references: [id])
 
+    @@unique([user_id, destination])
     @@map("access_stats")
 }

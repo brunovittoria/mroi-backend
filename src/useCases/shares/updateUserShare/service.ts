@@ -4,20 +4,17 @@ import { updateUserShareValidation } from './validation';
 export const updateUserShareService = async (body: Record<string, unknown>) => {
   const bodyParsers = updateUserShareValidation.parse(body);
 
-  await prisma.accessStat.upsert({
+  await prisma.accessStat.update({
     where: {
-      user_id: bodyParsers.userId,
-      destination: bodyParsers.destination,
+      user_id_destination: {
+        user_id: bodyParsers.userId,
+        destination: bodyParsers.destination
+      }
     },
-    update: {
+    data: {
       click_count: {
         increment: 1
       }
-    },
-    create: {
-        destination: bodyParsers.destination,
-        user_id: bodyParsers.userId,
-        click_count: 1
     }
   });
 };
